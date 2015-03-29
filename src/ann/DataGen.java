@@ -11,7 +11,7 @@ public class DataGen
 		dataset = Generate(inputs,sets, min, binary);
 	}
 	
-	private double[][] Generate(int inputs, int sets, int min, boolean binary)
+	public double[][] Generate(int inputs, int sets, int min, boolean binary)
 	{
 		double[][] dataset = new double[sets][inputs];
 		
@@ -49,6 +49,16 @@ public class DataGen
 		
 		dataset[3][0] = 1;
 		dataset[3][1] = 1;
+		*/
+		/*
+		dataset[0][0] = 0.9;
+		dataset[0][1] = 0.9;
+		dataset[0][2] = 0.9;
+		dataset[0][3] = 0.9;
+		dataset[0][4] = 0;
+		dataset[0][5] = 0;
+		dataset[0][6] = 0;
+		dataset[0][7] = 0;
 		*/
 		return dataset;
 	}

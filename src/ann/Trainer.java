@@ -37,6 +37,8 @@ public class Trainer
 	Ann ann;
 	Ann ann_last;
 	
+	double	general_error;
+	
 	public Trainer(Ann ann, double learn_factor)
 	{
 		this.learn_factor = learn_factor;					//store the learn factor
@@ -103,7 +105,7 @@ public class Trainer
 			System.out.println("First random weights calculated.");
 	}
 	
-	public void TrainingOffline(int training_iterations)
+	public void Training(int training_iterations)
 	{	
 		//first random weights
 		WeightsGen();
@@ -114,12 +116,16 @@ public class Trainer
 		
 		double[][] dataset = datagen.GetDataset();
 		
-		double last_eval_error = Integer.MAX_VALUE;
-		double eval_error = 0;
+		double last_general_error = Integer.MAX_VALUE;
+		general_error = 0;
+		
 		for(int i = 0 ; i < training_iterations ; i++)
 		{
-			datagen = new DataGen(length_I, Const.SETS, Const.MIN, Const.BINARY);
-			System.out.println("____________________________ITERATION___"  + (i + 1) + " of "+ training_iterations);
+			datagen.Generate(length_I, Const.SETS, Const.MIN, Const.BINARY);
+			dataset = datagen.GetDataset();
+			
+			if(Const.DEBUG)
+				System.out.println("____________________________ITERATION___"  + (i + 1) + " of "+ training_iterations);
 			
 			if(Const.DEBUG)
 				PrintWeights();
@@ -127,8 +133,8 @@ public class Trainer
 			if(Const.ETYPE == EvalType.EARLY_STOP && i % Const.RANGE == 0)
 			{
 				ann_last = ann;
-				eval_error /= Const.RANGE;
-				if(eval_error > last_eval_error)
+				general_error /= Const.RANGE;
+				if(general_error > last_general_error)
 				{
 					System.out.println("VICTORYYYYYYYY");
 					System.out.println("FINISHED IN ITERATION:__  " + (i - 1));
@@ -143,8 +149,8 @@ public class Trainer
 				}
 				else if (i != 0)
 				{
-					last_eval_error = eval_error;
-					eval_error = 0;
+					last_general_error = general_error;
+					general_error = 0;
 				}
 			}
 			
@@ -165,21 +171,31 @@ public class Trainer
 				DeltaWeights();
 				
 				double current_error = 0;
+				
+				if(Const.DEBUG)
+				{
+					for (int k = 0; k < 8 ; k++)
+						System.out.println("__________________________________________________________INPUTS " + k + "_____" + ann.neurons_I[k]);
+					System.out.println("\n");
+				}
+				
 				for (int k = 0; k < length_O ; k++)
 				{
 					current_error = ExpectedValue(k) - ann.neurons_O[k];
 					error += Math.pow(current_error,2);
 					
-					System.out.println("________________________________________________________EXPECTED_____" + ExpectedValue(k));
-					System.out.println("__________________________________________________________NEURON_____" + ann.neurons_O[k]);
-					System.out.println("");
+					if(Const.DEBUG)
+					{
+						System.out.println("________________________________________________________EXPECTED_____" + ExpectedValue(k));
+						System.out.println("__________________________________________________________NEURON_____" + ann.neurons_O[k]);
+						System.out.println("");
+					}
 				}				
 			}
 			error /= dataset.length;
-			eval_error += Math.pow(error,2);
-			
-			System.out.println("________________________________________________________GLOBAL_ERROR___" + error);
-			System.out.println("\n");
+			general_error += Math.pow(error,2);
+			if(Const.DEBUG)
+				System.out.println("________________________________________________________GLOBAL_ERROR___" + error + "\n\n");
 			
 			if(Const.ETYPE == EvalType.FITNESS && error < Const.FITNESS)
 			{
@@ -481,19 +497,31 @@ public class Trainer
 		switch (output)
 		{
 			case 0:
-				return (1 - ann.neurons_I[0]) * (1 - 2 * Math.sqrt(ann.neurons_I[4]));
+				return (1 - Math.sqrt(ann.neurons_I[0])) * (1 - 2 * Math.sqrt(ann.neurons_I[4]));
 			case 1:
-				return (1 - ann.neurons_I[1]) * (1 - 2 * Math.sqrt(ann.neurons_I[5]));
+				return (1 - Math.sqrt(ann.neurons_I[1])) * (1 - 2 * Math.sqrt(ann.neurons_I[5]));
 			case 2:
-				return (1 - ann.neurons_I[2]) * (1 - 2 * Math.sqrt(ann.neurons_I[6]));
+				return (1 - Math.sqrt(ann.neurons_I[2])) * (1 - 2 * Math.sqrt(ann.neurons_I[6]));
 			case 3:
-				return (1 - ann.neurons_I[3]) * (1 - 2 * Math.sqrt(ann.neurons_I[7]));
+				return (1 - Math.sqrt(ann.neurons_I[3])) * (1 - 2 * Math.sqrt(ann.neurons_I[7]));
 			default:
 				//?????????
 				return 999999;
 		}
 	}
 
+	
+	//GETTERS
+	public Ann GetAnn()
+	{
+		return ann;
+	}
+	
+	public double GetError()
+	{
+		return general_error;
+	}
+	
 	/////////////////////////////////////TESTING METHODS/////////////////////////////////
 	
 	public void PrintNeuronsValues(int dataset_iteration)

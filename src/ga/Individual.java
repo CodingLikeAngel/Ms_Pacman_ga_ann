@@ -2,11 +2,11 @@ package ga;
 
 import java.util.Random;
 
-public class Genotype
+public class Individual
 {
 	byte[] genotype;
 
-	public Genotype(final int inputs, final int hidden, final int outputs)
+	public Individual(final int inputs, final int hidden, final int outputs)
 	{
 		int genotype_size = inputs * outputs * (hidden + 1);
 		this.genotype = new byte[genotype_size];

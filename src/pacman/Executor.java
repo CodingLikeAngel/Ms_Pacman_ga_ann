@@ -1,6 +1,7 @@
 package pacman;
 
-import ga.Genotype;
+import ga.GaController;
+import ga.Individual;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -52,18 +53,18 @@ public class Executor
 	public static void main(String[] args)
 	{
 		//GET AN ANN
-		
-		byte[] genotype = new Genotype(Const.INPUTS,  Const.HIDDEN, Const.OUPUTS).GetGenotype();
+		GaController ga_controller = new GaController();
+		byte[] genotype = new Individual(Const.INPUTS,  Const.HIDDEN, Const.OUPUTS).GetGenotype();
 		Ann ann = new Ann(genotype, Const.INPUTS, Const.OUPUTS);	//genotype, inputs and ouputs
 		Trainer trainer = new Trainer(ann, Const.LEARN_FACTOR);	//genotype, inputs and ouputs
-		trainer.TrainingOffline(Const.TRAININGS);
+		trainer.Training(Const.TRAININGS);
 		
 		Executor exec=new Executor();
 
 		
 		//run multiple games in batch mode - good for testing.
-		int numTrials=500;
-		exec.runExperiment(new GaAnnPacMan(ann, trainer),new StarterGhosts(),numTrials);
+		int numTrials=50;
+		//exec.runExperiment(new GaAnnPacMan(trainer),new StarterGhosts(),numTrials);
 		 
 		
 		/*
@@ -99,8 +100,8 @@ public class Executor
 		
 		//run game for data collection
 		//exec.runGameTimed(new DataCollectorController(new KeyBoardInput()),new StarterGhosts(),visual);
-		//exec.runGameTimed(new GaAnnPacMan(ann, trainer),new StarterGhosts(),visual);
-		//exec.runGame(new GaAnnPacMan(ann, trainer),new StarterGhosts(),visual,3);
+		exec.runGameTimed(new GaAnnPacMan(ann,trainer),new StarterGhosts(),visual);
+		//exec.runGame(new GaAnnPacMan(trainer),new StarterGhosts(),visual,3);
 	}
 	
     /**

@@ -10,23 +10,27 @@ public class GaController
 {
 	byte[][] individuals;
 	Ann[] anns;
-	double[] errors;
-	
-	byte[][] selected_parents;
+	double[] fitness;
+	byte[][] new_individuals;
 			
 	public GaController()
 	{
 		int individual_size = Const.INDIVIDUALS;
 		
-		errors = new double[individual_size];
+		fitness = new double[individual_size];
 		anns = new Ann[individual_size];
 		individuals = new byte [individual_size][];
 		
 		CreateIndividuals();
-		TrainingIndividuals();
-		SelectionTurn();
+		
+		for (int i = 0, max = Const.GA_LOOPS; i < max; i++)
+		{
+			CreationTrainingAnns();
+			SelectionTurn(); //Callback cross and mutation
+			Replacement();
+		}
 	}
-	
+
 	private void CreateIndividuals()
 	{
 		for (int i = 0, max = individuals.length; i < max; i++)
@@ -35,16 +39,20 @@ public class GaController
 		}
 	}
 	
-	private void TrainingIndividuals()
+	private void CreationTrainingAnns()
 	{
 		for (int i = 0, max = individuals.length; i < max; i++)
 		{
-			anns[i] = new Ann(individuals[i], Const.INPUTS, Const.OUPUTS);
-			
-			Trainer trainer = new Trainer(anns[i], Const.LEARN_FACTOR);
-			trainer.Training(Const.TRAININGS);
-			
-			errors[i] = trainer.GetError(); 
+			//only if is a new ann
+			if(fitness[i] == 0)
+			{
+				anns[i] = new Ann(individuals[i], Const.INPUTS, Const.OUPUTS);
+				
+				Trainer trainer = new Trainer(anns[i], Const.LEARN_FACTOR);
+				trainer.Training(Const.TRAININGS);
+				
+				fitness[i] = trainer.GetError();
+			}
 		}
 	}
 	
@@ -106,9 +114,9 @@ public class GaController
 			
 			for (int i = 0, max = selected_individuals_indexs.length; i < max; i++)
 			{
-			     if (errors[selected_individuals_indexs[i]] < minimum)
+			     if (fitness[selected_individuals_indexs[i]] < minimum)
 			     {
-			    	 minimum = errors[selected_individuals_indexs[i]];
+			    	 minimum = fitness[selected_individuals_indexs[i]];
 			    	 minimum_pos = i;
 			     }
 			}
@@ -117,11 +125,114 @@ public class GaController
 		}
 		
 		//store selected parents
-		selected_parents = new byte[Const.SELEC_PARENTS][];
+		byte[][] selected_parents = new byte[Const.SELEC_PARENTS][];
 		
 		for (int i = 0, max = selected_parents.length; i < max; i++)
 		{
 			selected_parents[i] =  individuals[selected_parents_index[i]];
 		}
+		
+		Cross_ObjectiveFunction(selected_parents, selected_parents_index);
+	}
+	
+	private void Cross_ObjectiveFunction(byte[][] selected_parents, int[] selected_parents_index)
+	{
+		byte[][] children = new byte[Const.CROSS_CHILDREN][];
+		//Cross probability because less fitness is better.
+		double parent_0_prob = fitness[selected_parents_index[1]]/(fitness[selected_parents_index[0]] + fitness[selected_parents_index[1]]);
+	
+		Random rand = new Random();
+		
+		for (int i = 0, max = children.length; i < max; i++)
+		{
+			byte[] individual_bytes = new byte[selected_parents[0].length];
+			
+			for (int j = 0, max2 = individual_bytes.length; j < max2; j++)
+			{
+				if(rand.nextDouble() * (1 - 0) + 0 < parent_0_prob)
+					individual_bytes[j] = selected_parents[0][j];
+				else
+					individual_bytes[j] = selected_parents[1][j];
+			}
+			children[i] = individual_bytes;
+		}
+		
+		Mutation(children);
+	}
+	
+	private void Mutation(byte[][] children)
+	{
+		Random rand = new Random();
+		
+		for (int i = 0, max = children.length; i < max; i++)
+		{
+			for (int j = 0, max2 = children[0].length; j < max2; j++)
+			{
+				if(rand.nextDouble() * (100 - 0) + 0 <= Const.MUTATION_PROB)
+				{
+					if(children[i][j] == 1)
+						children[i][j] = 0;
+					else
+						children[i][j] = 1;
+				}
+			}
+		}
+		
+		new_individuals = children;
+	}
+	
+	private void Replacement()
+	{
+		//100% tasa
+		if(new_individuals.length == individuals.length)
+		{
+			individuals = new_individuals;
+			
+			for (int i = 0, max = individuals.length; i < max; i++)
+			{
+				fitness[i] = 0;
+			}
+		}
+		//elitist
+		else
+		{
+			//Selec the best
+			int max_pos= 0;
+			double max = 0;
+			
+			for (int i = 0, length = new_individuals.length; i < length; i++)
+			{
+				for (int j = 0, length2 = individuals.length; j < length2; j++)
+				{
+				     if (fitness[j] > max)
+				     {
+				    	 max = fitness[j];
+				    	 max_pos = j;
+				     }
+				}
+				//max fitness position, aka worst individual
+				individuals[max_pos] = new_individuals[i];
+				//reset the error to 0, The algorithm only trains individuals with 0 error on every iteration.
+				fitness[max_pos] = 0;
+			}
+		}
+	}
+	
+	public Ann GetBestAnn()
+	{
+		//Selec the best
+		int minimum_pos= 0;
+		double minimum = 9999999;
+		
+		for (int i = 0, max = individuals.length; i < max; i++)
+		{
+		     if (fitness[i] < minimum)
+		     {
+		    	 minimum = fitness[i];
+		    	 minimum_pos = i;
+		     }
+		}
+		
+		return anns[minimum_pos];
 	}
 }

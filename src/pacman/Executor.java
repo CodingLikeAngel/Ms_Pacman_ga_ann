@@ -54,17 +54,19 @@ public class Executor
 	{
 		//GET AN ANN
 		GaController ga_controller = new GaController();
+		/*
 		byte[] genotype = new Individual(Const.INPUTS,  Const.HIDDEN, Const.OUPUTS).GetGenotype();
 		Ann ann = new Ann(genotype, Const.INPUTS, Const.OUPUTS);	//genotype, inputs and ouputs
 		Trainer trainer = new Trainer(ann, Const.LEARN_FACTOR);	//genotype, inputs and ouputs
 		trainer.Training(Const.TRAININGS);
-		
+		*/
+		Trainer trainer = new Trainer(ga_controller.GetBestAnn(), Const.LEARN_FACTOR);
 		Executor exec=new Executor();
 
 		
 		//run multiple games in batch mode - good for testing.
 		int numTrials=50;
-		//exec.runExperiment(new GaAnnPacMan(trainer),new StarterGhosts(),numTrials);
+		exec.runExperiment(new GaAnnPacMan(ga_controller.GetBestAnn(),trainer),new StarterGhosts(),numTrials);
 		 
 		
 		/*
@@ -100,7 +102,7 @@ public class Executor
 		
 		//run game for data collection
 		//exec.runGameTimed(new DataCollectorController(new KeyBoardInput()),new StarterGhosts(),visual);
-		exec.runGameTimed(new GaAnnPacMan(ann,trainer),new StarterGhosts(),visual);
+		//exec.runGameTimed(new GaAnnPacMan(ga_controller.GetBestAnn(),trainer),new StarterGhosts(),visual);
 		//exec.runGame(new GaAnnPacMan(trainer),new StarterGhosts(),visual,3);
 	}
 	

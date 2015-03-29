@@ -69,15 +69,15 @@ public class GaAnnPacMan extends Controller<MOVE>
 		    	 highest_pos = i;
 		     }
 		}
-		
+		/*
 		System.out.println("Blinky : D -> " + dataset[0][0] + " T -> " + dataset[0][4] + " VAL -> " + ann.neurons_O[0]);
 		System.out.println("Pinky : D -> " + dataset[0][1] + " T -> " + dataset[0][5] + " VAL -> " + ann.neurons_O[1]);
 		System.out.println("Inky : D -> " + dataset[0][2] + " T -> " + dataset[0][6] + " VAL -> " + ann.neurons_O[2]);
 		System.out.println("Sue : D -> " + dataset[0][3] + " T -> " + dataset[0][7] + " VAL -> " + ann.neurons_O[3]);
-		
+		*/
 		if(highest < 0.2)
 		{
-			System.out.println("o");
+			//System.out.println("o");
 			//System.out.println("o highest " + Math.abs(highest));
 			int[] pills=game.getPillIndices();
 			int[] powerPills=game.getPowerPillIndices();		
@@ -103,12 +103,12 @@ public class GaAnnPacMan extends Controller<MOVE>
 		}
 		else if(ann.neurons_O[highest_pos] > 0)
 		{
-			System.out.println("-");
+			//System.out.println("-");
 			return game.getNextMoveAwayFromTarget(game.getPacmanCurrentNodeIndex(),game.getGhostCurrentNodeIndex(ghosts[highest_pos]),DM.PATH);
 		}
 		else
 		{
-			System.out.println("+");
+			//System.out.println("+");
 			return game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(),game.getGhostCurrentNodeIndex(ghosts[highest_pos]),DM.PATH);
 		}
 		/*

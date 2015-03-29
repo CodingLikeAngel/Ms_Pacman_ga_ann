@@ -132,7 +132,6 @@ public class Trainer
 			
 			if(Const.ETYPE == EvalType.EARLY_STOP && i % Const.RANGE == 0)
 			{
-				ann_last = ann;
 				general_error /= Const.RANGE;
 				if(general_error > last_general_error)
 				{
@@ -149,6 +148,7 @@ public class Trainer
 				}
 				else if (i != 0)
 				{
+					ann_last = ann;
 					last_general_error = general_error;
 					general_error = 0;
 				}
@@ -174,7 +174,7 @@ public class Trainer
 				
 				if(Const.DEBUG)
 				{
-					for (int k = 0; k < 8 ; k++)
+					for (int k = 0; k < length_I ; k++)
 						System.out.println("__________________________________________________________INPUTS " + k + "_____" + ann.neurons_I[k]);
 					System.out.println("\n");
 				}
@@ -192,7 +192,7 @@ public class Trainer
 					}
 				}				
 			}
-			error /= dataset.length;
+			error /= length_O;
 			general_error += error;
 			if(Const.DEBUG)
 				System.out.println("________________________________________________________GLOBAL_ERROR___" + error + "\n\n");
@@ -496,6 +496,17 @@ public class Trainer
 		 */
 		switch (output)
 		{
+			/*
+			case 0:
+				return 1.5 * ann.neurons_I[0] - ann.neurons_I[4];
+			case 1:
+				return 1.5 * ann.neurons_I[1] - ann.neurons_I[5];
+			case 2:
+				return 1.5 * ann.neurons_I[2] - ann.neurons_I[6];
+			case 3:
+				return 1.5 * ann.neurons_I[3] - ann.neurons_I[7];
+			*/
+			
 			case 0:
 				return (1 - Math.sqrt(ann.neurons_I[0])) * (1 - 2 * Math.sqrt(ann.neurons_I[4]));
 			case 1:
@@ -504,6 +515,7 @@ public class Trainer
 				return (1 - Math.sqrt(ann.neurons_I[2])) * (1 - 2 * Math.sqrt(ann.neurons_I[6]));
 			case 3:
 				return (1 - Math.sqrt(ann.neurons_I[3])) * (1 - 2 * Math.sqrt(ann.neurons_I[7]));
+				
 			default:
 				//?????????
 				return 999999;

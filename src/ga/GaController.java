@@ -29,6 +29,7 @@ public class GaController
 			SelectionTurn(); //Callback cross and mutation
 			Replacement();
 		}
+		CreationTrainingAnns();
 	}
 
 	private void CreateIndividuals()
@@ -168,7 +169,7 @@ public class GaController
 		{
 			for (int j = 0, max2 = children[0].length; j < max2; j++)
 			{
-				if(rand.nextDouble() * (100 - 0) + 0 <= Const.MUTATION_PROB)
+				if(rand.nextDouble() * (1 - 0) + 0 <= Const.MUTATION_PROB)
 				{
 					if(children[i][j] == 1)
 						children[i][j] = 0;
@@ -196,12 +197,12 @@ public class GaController
 		//elitist
 		else
 		{
-			//Selec the best
-			int max_pos= 0;
-			double max = 0;
-			
+			//Selec the worst and replace him
 			for (int i = 0, length = new_individuals.length; i < length; i++)
 			{
+				int max_pos= 0;
+				double max = 0;
+				
 				for (int j = 0, length2 = individuals.length; j < length2; j++)
 				{
 				     if (fitness[j] > max)

@@ -112,6 +112,7 @@ public class GaAnnPacMan extends Controller<MOVE>
 			return game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(),game.getGhostCurrentNodeIndex(ghosts[highest_pos]),DM.PATH);
 		}
 		/*
+		//LINEAL FUNCTION
 		////////////////////////////////////////////////
 		double[] outputs = new double [4];
 		GHOST[] ghosts = new GHOST[4];

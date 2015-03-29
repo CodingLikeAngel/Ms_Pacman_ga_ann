@@ -21,9 +21,9 @@ public interface Const {
 	public static final boolean		DEBUG 						= false;
 	
 	//NEURON
-	public static final int 		INPUTS 						= 8;
-	public static final int 		HIDDEN 						= 2*INPUTS + 1;
-	public static final int 		OUPUTS 						= 4;
+	public static final int 		INPUTS 						= 8;				//XOR -> 2
+	public static final int 		HIDDEN 						= 2*INPUTS + 1;		//XOR -> 1
+	public static final int 		OUPUTS 						= 4;				//XOR -> 1
 	
 	//TRAINING
 	public static final Activation	AFUNC 						= Activation.TANH;
@@ -37,16 +37,16 @@ public interface Const {
 	
 	//DATASET
 	public static final int 		MIN 						= 0;
-	public static final int 		SETS 						= 1;	//1 set is online training
-	public static final boolean 	BINARY 						= false;
+	public static final int 		SETS 						= 1;		//PACMAN -> 1		XOR -> 4
+	public static final boolean 	BINARY 						= false;	//PACMAN -> false	XOR -> true
 	
 	//PURPOSE
 	public static final Purpose		PURPOSE 					= Purpose.PACMAN;
 	
 	//GA
-	public static final int			GA_LOOPS					= 1000;
-	public static final int			INDIVIDUALS					= 100;
-	public static final int			SELEC_TURN_PRESELECTION		= 17;
+	public static final int			GA_LOOPS					= 500;
+	public static final int			INDIVIDUALS					= 25;
+	public static final int			SELEC_TURN_PRESELECTION		= 12;
 	public static final int			SELEC_PARENTS				= 2;
 	public static final int			CROSS_CHILDREN				= 2;
 	public static final double		MUTATION_PROB				= 0.05;

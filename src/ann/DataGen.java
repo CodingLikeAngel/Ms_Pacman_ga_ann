@@ -2,6 +2,9 @@ package ann;
 
 import java.util.Random;
 
+import ann_ga.utils.Const;
+import ann_ga.utils.Const.Purpose;
+
 public class DataGen
 {
 	double[][] dataset;	//inputs and sets
@@ -37,29 +40,21 @@ public class DataGen
 			}
 		}	
 		
-		/*
-		dataset[0][0] = 0;
-		dataset[0][1] = 0;
+		if(Const.PURPOSE == Purpose.XOR)
+		{
+			dataset[0][0] = 0;
+			dataset[0][1] = 0;
+			
+			dataset[1][0] = 0;
+			dataset[1][1] = 1;
+			
+			dataset[2][0] = 1;
+			dataset[2][1] = 0;
+			
+			dataset[3][0] = 1;
+			dataset[3][1] = 1;
+		}
 		
-		dataset[1][0] = 0;
-		dataset[1][1] = 1;
-		
-		dataset[2][0] = 1;
-		dataset[2][1] = 0;
-		
-		dataset[3][0] = 1;
-		dataset[3][1] = 1;
-		*/
-		/*
-		dataset[0][0] = 0.9;
-		dataset[0][1] = 0.9;
-		dataset[0][2] = 0.9;
-		dataset[0][3] = 0.9;
-		dataset[0][4] = 0;
-		dataset[0][5] = 0;
-		dataset[0][6] = 0;
-		dataset[0][7] = 0;
-		*/
 		return dataset;
 	}
 	

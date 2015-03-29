@@ -14,6 +14,7 @@ import java.util.EnumMap;
 import java.util.Random;
 
 import ann.Ann;
+import ann.DataGen;
 import ann.Trainer;
 import ann_ga.utils.Const;
 import dataRecording.DataCollectorController;
@@ -52,22 +53,72 @@ public class Executor
 	 */
 	public static void main(String[] args)
 	{
-		//GET AN ANN
-		GaController ga_controller = new GaController();
 		/*
+		///////////////////////////////////////////////////////////////////////////////////////////
+		//TESTING XOR
+		byte[] genotype = new byte[18];
+		
+		for (int i = 0; i < 4; i++) {
+			genotype[i] = (byte) 1;
+		}
+		Ann ann = new Ann(genotype, Const.INPUTS, Const.OUPUTS);	//genotype, inputs and ouputs
+		Trainer trainer = new Trainer(ann, Const.LEARN_FACTOR);	//genotype, inputs and ouputs
+		trainer.Training(Const.TRAININGS);
+		///////////////////////////////////////////////////////////////////////////////////////////
+		*/
+		
+		
+		///////////////////////////////////////////////////////////////////////////////////////////
+		//CREATING THE ARTIFICIAL NEURAL NETWORK
+		//Genetic algorithm to select a good ann.
+		GaController ga_controller = new GaController();
+		Ann ann = ga_controller.GetBestAnn();
+		//trainer only for getting the feedforward
+		Trainer trainer = new Trainer(ann, Const.LEARN_FACTOR);
+		System.out.println("ANN SELECTED");
+		////////////////////////////////////////////////////////////////////////////////////////////
+		
+		
+		/*
+		////////////////////////////////////////////////////////////////////////////////////////////
+		//RANDOM ANN TRAINED
 		byte[] genotype = new Individual(Const.INPUTS,  Const.HIDDEN, Const.OUPUTS).GetGenotype();
 		Ann ann = new Ann(genotype, Const.INPUTS, Const.OUPUTS);	//genotype, inputs and ouputs
 		Trainer trainer = new Trainer(ann, Const.LEARN_FACTOR);	//genotype, inputs and ouputs
 		trainer.Training(Const.TRAININGS);
+		System.out.println("ANN SELECTED");	
+		////////////////////////////////////////////////////////////////////////////////////////////
 		*/
-		Trainer trainer = new Trainer(ga_controller.GetBestAnn(), Const.LEARN_FACTOR);
+		
+		////////////////////////////////////////////////////////////////////////////////////////////
+		//TEST THE ANN
+		DataGen datagen = new DataGen(Const.INPUTS, Const.SETS, Const.MIN, Const.BINARY);
+		//datagen.Generate(Const.INPUTS, Const.SETS, Const.MIN, Const.BINARY);
+		double[][] dataset = datagen.GetDataset();
+		trainer.FeedForward(dataset, 0);
+		System.out.println("ANN");
+		System.out.println("OUTPUT 0 red____BLINKY 	-> " + trainer.GetAnn().neurons_O[0]);
+		System.out.println("OUTPUT 1 pink___PINKY 	-> " + trainer.GetAnn().neurons_O[1]);
+		System.out.println("OUTPUT 2 blue___INKY 	-> " + trainer.GetAnn().neurons_O[2]);
+		System.out.println("OUTPUT 3 orange_SUE 	-> " + trainer.GetAnn().neurons_O[3]);
+		System.out.println("");
+		
+		System.out.println("LINEAL FUNCTION");
+		System.out.println("OUTPUT 0 red____BLINKY 	-> " + (1 - Math.sqrt(trainer.GetAnn().neurons_I[0])) * (1 - 2 * trainer.GetAnn().neurons_I[4]));
+		System.out.println("OUTPUT 1 pink___PINKY 	-> " + (1 - Math.sqrt(trainer.GetAnn().neurons_I[1])) * (1 - 2 * trainer.GetAnn().neurons_I[5]));
+		System.out.println("OUTPUT 2 blue___INKY 	-> " + (1 - Math.sqrt(trainer.GetAnn().neurons_I[2])) * (1 - 2 * trainer.GetAnn().neurons_I[6]));
+		System.out.println("OUTPUT 3 orange_SUE 	-> " + (1 - Math.sqrt(trainer.GetAnn().neurons_I[3])) * (1 - 2 * trainer.GetAnn().neurons_I[7]));
+		System.out.println("");
+		////////////////////////////////////////////////////////////////////////////////////////////
+		
 		Executor exec=new Executor();
 
-		
+		boolean visual=true;
 		//run multiple games in batch mode - good for testing.
 		int numTrials=50;
-		//exec.runExperiment(new GaAnnPacMan(ga_controller.GetBestAnn(),trainer),new StarterGhosts(),numTrials);
-		 
+		exec.runExperiment(new GaAnnPacMan(trainer.GetAnn(),trainer),new StarterGhosts(),numTrials);
+		//exec.runGameTimed(new GaAnnPacMan(trainer.GetAnn(),trainer),new StarterGhosts(),visual);
+		//exec.runGame(new GaAnnPacMan(trainer.GetAnn(),trainer),new StarterGhosts(),visual,3);
 		
 		/*
 		//run a game in synchronous mode: game waits until controllers respond.
@@ -78,7 +129,7 @@ public class Executor
 		
 		///*
 		//run the game in asynchronous mode.
-		boolean visual=true;
+		
 //		exec.runGameTimed(new NearestPillPacMan(),new AggressiveGhosts(),visual);
 //		exec.runGameTimed(new StarterPacMan(),new StarterGhosts(),visual);
 //		exec.runGameTimed(new HumanController(new KeyBoardInput()),new StarterGhosts(),visual);	
@@ -102,8 +153,8 @@ public class Executor
 		
 		//run game for data collection
 		//exec.runGameTimed(new DataCollectorController(new KeyBoardInput()),new StarterGhosts(),visual);
-		exec.runGameTimed(new GaAnnPacMan(ga_controller.GetBestAnn(),trainer),new StarterGhosts(),visual);
-		//exec.runGame(new GaAnnPacMan(trainer),new StarterGhosts(),visual,3);
+		//exec.runGameTimed(new GaAnnPacMan(trainer.GetAnn(),trainer),new StarterGhosts(),visual);
+		//exec.runGame(new GaAnnPacMan(trainer.GetAnn(),trainer),new StarterGhosts(),visual,3);
 	}
 	
     /**

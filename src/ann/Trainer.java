@@ -193,7 +193,7 @@ public class Trainer
 				}				
 			}
 			error /= dataset.length;
-			general_error += Math.pow(error,2);
+			general_error += error;
 			if(Const.DEBUG)
 				System.out.println("________________________________________________________GLOBAL_ERROR___" + error + "\n\n");
 			

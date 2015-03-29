@@ -66,7 +66,7 @@ public class Executor
 		
 		//run multiple games in batch mode - good for testing.
 		int numTrials=50;
-		exec.runExperiment(new GaAnnPacMan(ga_controller.GetBestAnn(),trainer),new StarterGhosts(),numTrials);
+		//exec.runExperiment(new GaAnnPacMan(ga_controller.GetBestAnn(),trainer),new StarterGhosts(),numTrials);
 		 
 		
 		/*
@@ -102,7 +102,7 @@ public class Executor
 		
 		//run game for data collection
 		//exec.runGameTimed(new DataCollectorController(new KeyBoardInput()),new StarterGhosts(),visual);
-		//exec.runGameTimed(new GaAnnPacMan(ga_controller.GetBestAnn(),trainer),new StarterGhosts(),visual);
+		exec.runGameTimed(new GaAnnPacMan(ga_controller.GetBestAnn(),trainer),new StarterGhosts(),visual);
 		//exec.runGame(new GaAnnPacMan(trainer),new StarterGhosts(),visual,3);
 	}
 	

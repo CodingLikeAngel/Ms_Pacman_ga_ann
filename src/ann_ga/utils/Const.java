@@ -46,7 +46,7 @@ public interface Const {
 	//GA
 	public static final int			GA_LOOPS					= 500;
 	public static final int			INDIVIDUALS					= 25;
-	public static final int			SELEC_TURN_PRESELECTION		= 12;
+	public static final int			SELEC_TURN_PRESELECTION		= 10;
 	public static final int			SELEC_PARENTS				= 2;
 	public static final int			CROSS_CHILDREN				= 2;
 	public static final double		MUTATION_PROB				= 0.05;

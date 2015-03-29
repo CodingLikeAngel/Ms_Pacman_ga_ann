@@ -27,7 +27,8 @@ public class GaController
 		{
 			CreationTrainingAnns();
 			SelectionTurn(); //Callback cross and mutation
-			Replacement();
+			ReplacementElitist();
+			//ReplacementTurn();
 		}
 		CreationTrainingAnns();
 	}
@@ -182,7 +183,7 @@ public class GaController
 		new_individuals = children;
 	}
 	
-	private void Replacement()
+	private void ReplacementElitist()
 	{
 		//100% tasa
 		if(new_individuals.length == individuals.length)
@@ -215,6 +216,91 @@ public class GaController
 				individuals[max_pos] = new_individuals[i];
 				//reset the error to 0, The algorithm only trains individuals with 0 error on every iteration.
 				fitness[max_pos] = 0;
+			}
+		}
+	}
+	
+	private void ReplacementTurn()
+	{
+		//100% tasa
+		if(new_individuals.length == individuals.length)
+		{
+			individuals = new_individuals;
+			
+			for (int i = 0, max = individuals.length; i < max; i++)
+			{
+				fitness[i] = 0;
+			}
+		}
+		//elitist
+		else
+		{
+			Random rand = new Random();
+			int Low = 0;
+			int High = individuals.length;
+			int[] selected_parents_index = new int [Const.SELEC_PARENTS];
+			
+			//Selec the worst and replace him
+			for (int i = 0, length = new_individuals.length; i < length; i++)
+			{
+				int[] selected_individuals_indexs = new int[Const.SELEC_TURN_PRESELECTION];
+				
+				for (int j = 0, max = Const.SELEC_TURN_PRESELECTION; j < max; j++)
+				{			
+					//Non repeating index.
+					int index;
+					boolean index_repeated;
+					do
+					{
+						index_repeated = false;
+						index = rand.nextInt(High-Low) + Low;
+						
+						//non repeating one previous selected parent
+						for (int k = 0; k < i; k++)
+						{
+							if(selected_parents_index[k] == index)
+							{
+								index_repeated = true;
+								break;
+							}
+						}
+						
+						if(!index_repeated)
+						{
+							//non repeating one inside the list for choosing the parent
+							for (int k = 0; k < j; k++)
+							{
+								if(selected_individuals_indexs[k] == index)
+								{
+									index_repeated = true;
+									break;
+								}
+							}
+						}
+						
+					} while (index_repeated);
+					selected_individuals_indexs[i] = index;
+				}
+				
+				//Selec the worst
+				int max_pos= 0;
+				double max = 0;
+				
+				for (int j = 0, length2 = selected_individuals_indexs.length; j < length2; j++)
+				{
+				     if (fitness[selected_individuals_indexs[i]] > max)
+				     {
+				    	 max = fitness[selected_individuals_indexs[i]];
+				    	 max_pos = i;
+				     }
+				}
+				
+				selected_parents_index[i] = selected_individuals_indexs[max_pos];
+
+				//max fitness position, aka worst individual
+				individuals[selected_parents_index[i]] = new_individuals[i];
+				//reset the error to 0, The algorithm only trains individuals with 0 error on every iteration.
+				fitness[selected_parents_index[i]] = 0;
 			}
 		}
 	}

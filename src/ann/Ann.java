@@ -1,7 +1,12 @@
 package ann;
 
 import ann_ga.utils.Const;
-
+/***
+ * Red neuronal
+ * Crea las estructura y mapea la red neuronal. Almacena los datos imprescindibles.
+ * @author Carlos Bailón y Daniel Castaño
+ *
+ */
 public class Ann
 {
 	//MAPPING
@@ -22,6 +27,12 @@ public class Ann
 	public double[] 	neurons_H;			//hidden values
 	public double[] 	neurons_O;			//output values
 	
+	/***
+	 * Constructor de la red neuronal 
+	 * @param genotype -> Dato binario que da las neuronas y sus conexiones.
+	 * @param inputs -> el número de entradas
+	 * @param outputs -> el número de salidas
+	 */
 	public Ann(byte[] genotype, final int inputs, final int outputs)
 	{
 		final int gen_size = genotype.length;				//store the genontype size
@@ -49,6 +60,15 @@ public class Ann
 		WeightMapping(genotype, gen_size, blocks_length, inputs, hidden, outputs);
 	}
 	
+	/***
+	 * Creación del mapeo de las conexiones entre las neuronas según el genotipo dado.
+	 * @param genotype -> La distibución de las neuronas de la red neuronal
+	 * @param gen_size -> tamaño del genotipo.
+	 * @param blocks_length -> ocultas + 1
+	 * @param inputs -> número de neuronas de entrada
+	 * @param hidden -> número de neuronas ocultas 
+	 * @param outputs -> número de neuronas de salida
+	 */
 	private void WeightMapping(byte[] genotype, final int gen_size, final int blocks_length,final int inputs, final int hidden, final int outputs)
 	{	
 		for (int i = 0; i < gen_size; i++)
@@ -102,6 +122,12 @@ public class Ann
 			PrintWeightMapping(inputs, hidden, outputs);
 	}
 	
+	/***
+	 * Función de debug que muestra por consola las conexiones de la red neuronal
+	 * @param inputs -> número de neuronas de entrada
+	 * @param hidden -> número de neuronas en la capa ocultas
+	 * @param outputs -> número de nuronas de salida
+	 */
 	public void PrintWeightMapping(final int inputs, final int hidden, final int outputs)
 	{
 		System.out.println("###_WEIGHT MAPPING_###\n");

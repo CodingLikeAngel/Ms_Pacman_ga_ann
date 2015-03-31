@@ -1,5 +1,10 @@
 package ann_ga.utils;
 
+/**
+ * Constantes para la creación, entrenamiento y evaluación de la red asimismo del algoritmo genético.
+ * @author Carlos Bailón y Daniel Castaño 
+ *
+ */
 public interface Const {
 	public enum Activation {
 	    UMBRAL,

@@ -6,13 +6,22 @@ import ann.Ann;
 import ann.Trainer;
 import ann_ga.utils.Const;
 
+/***
+ * Algoritmo genético para elegir la mejor red neuronal artificial, la cual se encargará de controlar a Ms Pacman.
+ * @author Carlos Bailón y Daniel Castaño
+ *
+ */
 public class GaController
 {
 	byte[][] individuals;
 	Ann[] anns;
 	double[] fitness;
 	byte[][] new_individuals;
-			
+	
+	/**
+	 * Constructor del algoritmo genético
+	 * Itera las veces establecidas.
+	 */
 	public GaController()
 	{
 		int individual_size = Const.INDIVIDUALS;
@@ -33,6 +42,9 @@ public class GaController
 		CreationTrainingAnns();
 	}
 
+	/**
+	 * Crea una población de redes neuronales con conexiones aleatorias.
+	 */
 	private void CreateIndividuals()
 	{
 		for (int i = 0, max = individuals.length; i < max; i++)
@@ -41,6 +53,10 @@ public class GaController
 		}
 	}
 	
+	/**
+	 * Crea y evalua las redes neuronales en base de los genotipos generados anteriormente [CreateIndividuals]
+	 * Las entrena y obtiene el error de cada una de los individuos, el cual se utiliza como fitness.
+	 */
 	private void CreationTrainingAnns()
 	{
 		for (int i = 0, max = individuals.length; i < max; i++)
@@ -58,6 +74,11 @@ public class GaController
 		}
 	}
 	
+	/**
+	 * Selecciona un grupo de individuos únicos entre sí de tamaño dado por SELEC_PARENTS para su posterior cruce.
+	 * Selección por torneo.
+	 * LLama la función de cruce.
+	 */
 	private void SelectionTurn()
 	{	
 		Random rand = new Random();
@@ -137,6 +158,13 @@ public class GaController
 		Cross_ObjectiveFunction(selected_parents, selected_parents_index);
 	}
 	
+	/**
+	 * Cruza los individuos seleccionados para dar lugar a un nuevo grupo de individuos
+	 * Cruce de función objetivo.
+	 * Llama a la función de mutación.
+	 * @param selected_parents -> grupo de los individuos escojidos para el cruce
+	 * @param selected_parents_index -> Índices de los individuos para cruve en el array de individuos individuals.
+	 */
 	private void Cross_ObjectiveFunction(byte[][] selected_parents, int[] selected_parents_index)
 	{
 		byte[][] children = new byte[Const.CROSS_CHILDREN][];
@@ -162,6 +190,10 @@ public class GaController
 		Mutation(children);
 	}
 	
+	/**
+	 * Cambia algunos de los bytes del genotipo de los individuos. La probabilidad es del 5%.
+	 * @param children -> 
+	 */
 	private void Mutation(byte[][] children)
 	{
 		Random rand = new Random();
@@ -183,6 +215,11 @@ public class GaController
 		new_individuals = children;
 	}
 	
+	/**
+	 *  Remplazo elitista de los individuos de la población si no hay tantos hijos como población.
+	 * - 100% de remplazo -> remplaza totalmente la población 
+	 * - elitista -> remplaza los peores d ela población por los hijos generados por el cruce.
+	 */
 	private void ReplacementElitist()
 	{
 		//100% tasa
@@ -219,7 +256,11 @@ public class GaController
 			}
 		}
 	}
-	
+	/**
+	 *  Remplazo por torneo de los individuos de la población si no hay tantos hijos como población.
+	 * - 100% de remplazo -> remplaza totalmente la población 
+	 * - torneo -> reemplaza por torneo los peores individuos de dos grupos seleccionados al azar.
+	 */
 	private void ReplacementTurn()
 	{
 		//100% tasa
@@ -305,6 +346,10 @@ public class GaController
 		}
 	}
 	
+	/**
+	 * Retorna la mejor red neuronal artificial que mejor fitness tiene.
+	 * @return -> la mejor red neuronal, la cual es la seleccionada para ser el controlador de Pacman
+	 */
 	public Ann GetBestAnn()
 	{
 		//Selec the best

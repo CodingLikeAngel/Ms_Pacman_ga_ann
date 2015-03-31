@@ -4,7 +4,11 @@ import java.util.Random;
 
 import ann_ga.utils.Const;
 import ann_ga.utils.Const.Purpose;
-
+/***
+ * Datos de entrada de la neurona, son aleatorios excepto si es un XOR.
+ * @author Carlos Bailón y Daniel Castaño
+ *
+ */
 public class DataGen
 {
 	double[][] dataset;	//inputs and sets
@@ -13,7 +17,14 @@ public class DataGen
 	{
 		dataset = Generate(inputs,sets, min, binary);
 	}
-	
+	/**
+	 * Genera el dataset con valores aleatorios para el entrenamiento de la red neuronal artificial.
+	 * @param inputs -> número de neuronas de entrada
+	 * @param sets -> número de datasets (por si es online u offline)
+	 * @param min -> valor mínimo del dataset
+	 * @param binary -> indica si se desea trabajar con valores binarios o no
+	 * @return -> Retorna el dataset (double [int][int])
+	 */
 	public double[][] Generate(int inputs, int sets, int min, boolean binary)
 	{
 		double[][] dataset = new double[sets][inputs];
@@ -58,12 +69,19 @@ public class DataGen
 		return dataset;
 	}
 	
+	/**
+	 * Función para obtener el dataset
+	 * @return retorna el dataset
+	 */
 	public double[][] GetDataset()
 	{
 		return dataset;
 	}
 	
 	//TESTING METHODS
+	/**
+	 * Imprime el data set para testeo
+	 */
 	public void PrintDataSet()
 	{
 		System.out.println("###_DATASET_### iteration -> INPUT\n");

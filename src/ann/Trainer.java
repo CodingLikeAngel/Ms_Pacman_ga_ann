@@ -8,8 +8,8 @@ import ann_ga.utils.Const.EvalType;
 import ann_ga.utils.Const.Purpose;
 
 /**
- * Artificial neural network
- * @author Daniel Castaño Estrella
+ * Clase de entrenamiento de una red neuronal artificial.
+ * @author Carlos Bailón y Daniel Castaño
  *
  */
 public class Trainer
@@ -39,6 +39,11 @@ public class Trainer
 	
 	double	general_error;
 	
+	/**
+	 * Constructor del entrenador. Almacena datos importantes como la propia red.
+	 * @param ann -> Red neuronal artificial
+	 * @param learn_factor -> Constante de aprendizaje
+	 */
 	public Trainer(Ann ann, double learn_factor)
 	{
 		this.learn_factor = learn_factor;					//store the learn factor
@@ -50,6 +55,10 @@ public class Trainer
 
 	}
 	
+	/**
+	 * Asignación inicial de los pesos de las conexiones entre neuronas
+	 * Valores aleatorios  
+	 */
 	private void WeightsGen()
 	{		
 		Random rand = new Random();
@@ -89,22 +98,21 @@ public class Trainer
 				}
 			}
 		}
-		/*
-		//weights to debug
-		annx.weights_I_O[0][0] = 0.0193;
-		annx.weights_I_O[1][0] = 0.3838;
-		
-		annx.weights_H_I[0][0] = -0.9561;
-		annx.weights_H_I[0][1] = -0.3124;
-		annx.weights_H_BIAS[0] = -0.3428;
-		
-		annx.weights_H_O[0][0] = -0.8003;
-		annx.weights_O_BIAS[0] = 0.0914;
-		*/
+
 		if(Const.DEBUG)
 			System.out.println("First random weights calculated.");
 	}
 	
+	/***
+	 * Función principal para la iteraciones de entrenamiento.
+	 * Se llaman a las funciones
+	 * WeightsGen() solamente una vez
+	 * FeedForward()
+	 * BackPropagation() 
+	 * DeltaWeights()
+	 * ExpectedValue ()
+	 * @param training_iterations -> número de iteraciones para el entrenamiento.
+	 */
 	public void Training(int training_iterations)
 	{	
 		//first random weights
@@ -220,7 +228,11 @@ public class Trainer
 		
 		System.out.println("END");
 	}
-	
+	/**
+	 * Cálculo de salida de cada neurona hasta llegar a las de salida, obteniendo el valor de salida de la red en esa iteración.
+	 * @param dataset datos de las neuronas de entrada
+	 * @param dataset_iteration -> el numero de iteración del dataset actual  
+	 */
 	public void FeedForward(double[][] dataset, int dataset_iteration)
 	{	
 		//reset neurons
@@ -320,7 +332,9 @@ public class Trainer
 		if(Const.DEBUG)
 			PrintNeuronsValues(dataset_iteration);
 	}
-	
+	/**
+	 * Cálculo de los errores de las capas de salida y ocultas de la red neuronal para posteriormente calcular los pesos delta
+	 */
 	private void BackPropagation()
 	{		
 		errors_O = new double[length_O];
@@ -365,7 +379,9 @@ public class Trainer
 				System.out.println("hidden error_ " + i + "____" + errors_H[i]);
 		}
 	}
-	
+	/**
+	 * Establece la varianza de pesos en los deltas en función del valor de error en cada conexión para la posterior corrección de los pesos [WeightsCorrection()]
+	 */
 	private void DeltaWeights()
 	{	
 		//deltas of i_o
@@ -408,6 +424,10 @@ public class Trainer
 			PrintDeltas();
 	}
 	
+	/**
+	 * Asignación de los nuevos pesos a las conexiones entre neuronas
+	 * Se realiza al final de cada iteración (una vez completado el dataset)
+	 */
 	private void WeightsCorrection()
 	{		
 		//weights of i_o
@@ -450,6 +470,14 @@ public class Trainer
 			System.out.println("WEIGHTS CORRECTED");
 	}
 	
+	/**
+	 * Dos tipos de sistema neuronal
+	 * - XOR
+	 * - PACMAN
+	 * Dependiendo de el tipo de sistema neuronal en el que nos encontremos llamaremos a distintas funciones.
+	 * @param output -> valor de salida de la red neuronal en una neurona
+	 * @return double-> El resultado de la fórmula de valores esperados
+	 */
 	private double ExpectedValue(int output)
 	{
 		if(Const.PURPOSE == Purpose.XOR)
@@ -461,6 +489,11 @@ public class Trainer
 	}
 	
 	//XOR
+	/**
+	 * Solamente hay una salida, asíq ue hay un único valor esperado.
+	 * @param output -> uno de los valores de salida de la red neuronal
+	 * @return int -> El resultado de la fórmula de valores esperados
+	 */
 	private int ExpectedValue_XOR(int output)
 	{
 		switch (output)
@@ -480,33 +513,25 @@ public class Trainer
 				return 0;
 			}
 			default:
-				//?????????
+				//not possible
 				return 999999;
 		}
 	}
 	
 	//PACMAN
+	/**
+	 * E = ( 1 - raíz(D) ) ( 1 - 2 * raíz(T) );
+	 * Donde E es la estrategia resultante( 1 -> huir del fantasma; -1 -> ir a por el fantasma )
+	 * D es la distancia al fantasma en un rango de 0 a 1
+	 * T es el tiempo que le queda de ser comestible en un rango de 0 a 1 
+	 * 
+	 * @param output -> unos de los valores de salida de la red neuronal
+	 * @return double -> El resultado de la formula de valores esperados
+	 */
 	private double ExpectedValue_PacMan(int output)
 	{
-		/*
-		 * E = ( 1 - D ) ( 1 - 2 T );
-		 * Donde E es la estrategia resultante( 1 -> huir del fantasma; -1 -> ir a por el fantasma )
-		 * D es la distancia al fantasma en un rango de 0 a 1
-		 * T es el tiempo que le queda de ser comestible en un rango de 0 a 1 
-		 */
 		switch (output)
 		{
-			/*
-			case 0:
-				return 1.5 * ann.neurons_I[0] - ann.neurons_I[4];
-			case 1:
-				return 1.5 * ann.neurons_I[1] - ann.neurons_I[5];
-			case 2:
-				return 1.5 * ann.neurons_I[2] - ann.neurons_I[6];
-			case 3:
-				return 1.5 * ann.neurons_I[3] - ann.neurons_I[7];
-			*/
-			
 			case 0:
 				return (1 - Math.sqrt(ann.neurons_I[0])) * (1 - 2 * Math.sqrt(ann.neurons_I[4]));
 			case 1:
@@ -517,25 +542,35 @@ public class Trainer
 				return (1 - Math.sqrt(ann.neurons_I[3])) * (1 - 2 * Math.sqrt(ann.neurons_I[7]));
 				
 			default:
-				//?????????
+				//not possible
 				return 999999;
 		}
 	}
 
 	
 	//GETTERS
+	/**
+	 * Devuelve la red neuronal artificial
+	 * @return -> red neuronal artificial
+	 */
 	public Ann GetAnn()
 	{
 		return ann;
 	}
-	
+	/**
+	 * Devuelve el error de la red neuronal artificial
+	 * @return -> error de la red neuronal artificial
+	 */
 	public double GetError()
 	{
 		return general_error;
 	}
 	
 	/////////////////////////////////////TESTING METHODS/////////////////////////////////
-	
+	/**
+	 * Imprime por consola el valor de las neuronas
+	 * @param dataset_iteration
+	 */
 	public void PrintNeuronsValues(int dataset_iteration)
 	{
 		System.out.println("###_NEURONS VALUES_### DATASET_ITERATION____"+ dataset_iteration +"\n");
@@ -572,6 +607,9 @@ public class Trainer
 		}
 	}
 	
+	/**
+	 * Imprime por consola los valores de los pesos de todas las conexiones
+	 */
 	public void PrintWeights()
 	{
 		System.out.println("###_WEIGHTS_###\n");
@@ -640,6 +678,9 @@ public class Trainer
 		System.out.print("#############\n");
 	}
 	
+	/**
+	 *  Imprime por consola los valores de los deltas
+	 */
 	public void PrintDeltas()
 	{
 		System.out.println("###_DELTAS_###\n");
@@ -709,15 +750,30 @@ public class Trainer
 	}
 	
 	//from 0 to 1
+	/**
+	 * Retorna el resultado de la función sigmoide
+	 * @param x
+	 * @return resultado de la operación
+	 */
 	public static double Sigmoid(double x) {
 	    return (1/( 1 + Math.pow(Math.E,(-1*x))));
 	}
 	
 	//from -1 to 1
-		public static double HyperbolicTan(double x) {
-		    return ((1 - Math.pow(Math.E,(-2*x))) / (1 + Math.pow(Math.E,(-2*x))));
-		}
+	/**
+	 * Retorna el resultado de la función hiperbólica tangencial
+	 * @param x
+	 * @return resultado de la operación
+	 */
+	public static double HyperbolicTan(double x) {
+	    return ((1 - Math.pow(Math.E,(-2*x))) / (1 + Math.pow(Math.E,(-2*x))));
+	}
 		
+	/**
+	 * Retorna el resultado de la función hiperbolica tangencial inversa
+	 * @param x
+	 * @return resultado de la operación
+	 */
 	public static double ArcHyperbolicTan(double x) 
 	{ 
 		return 0.5*Math.log( (x + 1.0) / (x - 1.0) ); 
